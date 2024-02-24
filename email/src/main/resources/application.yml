@@ -1,0 +1,25 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5435/mail_service_db
+    driver-class-name: org.postgresql.Driver
+    username: touhid
+    password: touhid
+  jpa:
+    hibernate:
+      ddl-auto: update
+  kafka:
+    topic:
+      name: order_topic
+    consumer:
+      bootstrap-servers: 127.0.0.1:29092, 127.0.0.1:39092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: email
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'

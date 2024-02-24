@@ -1,0 +1,34 @@
+kafka-address: &server_kafka_address '127.0.0.1:29092, 127.0.0.1:39092'
+database-connection: &database_connection_properties
+  url: 'jdbc:postgresql://127.0.0.1:5433/order_service_db'
+  driver-class-name: 'org.postgresql.Driver'
+  username: 'touhid'
+  password: 'touhid'
+
+server:
+  port: 8080
+spring:
+  datasource:
+    <<: *database_connection_properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+  kafka:
+    bootstrap-servers: *server_kafka_address
+    producer:
+      bootstrap-servers: *server_kafka_address
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topic:
+      name: order_topic
+    consumer:
+      bootstrap-servers: *server_kafka_address
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: stock
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'

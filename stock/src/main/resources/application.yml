@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  application:
+    name: STOCK_SERVICE
   datasource:
     url: jdbc:postgresql://127.0.0.1:5434/stock_service_db
     driver-class-name: org.postgresql.Driver
@@ -23,3 +25,17 @@ spring:
           json:
             trusted:
               packages: '*'
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging.file.dir: ${home}/microservice-logs
+
+logging:
+  file:
+    name: ${logging.file.dir}/stock_service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30

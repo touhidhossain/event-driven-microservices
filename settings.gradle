@@ -1,2 +1,2 @@
 rootProject.name = 'event-driven-microservices'
-include 'base-domains', 'email', 'order', 'stock'
+include 'api_gateway','base-domains', 'email', 'order', 'stock'

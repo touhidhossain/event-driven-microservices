@@ -4,13 +4,12 @@ import com.touhid.basedomains.dto.Order;
 import com.touhid.basedomains.dto.OrderEvent;
 import com.touhid.order.domain.ProductOrder;
 import com.touhid.order.kafka.OrderProducerService;
-import com.touhid.order.repository.ProductOrderRepository;
 import com.touhid.order.service.ProductOrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -20,6 +19,7 @@ import java.util.UUID;
 public class OrderController {
     private final OrderProducerService orderProducerService;
     private final ProductOrderService productOrderService;
+    private final WebClient stockServiceClient;
 
     @PostMapping("/order")
     public String placeOrder(@RequestBody Order order) {
@@ -45,5 +45,21 @@ public class OrderController {
         orderProducerService.sendMessage(orderEvent);
 
         return "Order placed successfully!";
+    }
+
+    @GetMapping("/order/{productId}")
+    public Integer getStock(@PathVariable("productId") long productId) {
+        return stockServiceClient.get().uri("/api/v1/stock/"+productId)
+                .exchangeToMono(clientResponse -> {
+                    if (clientResponse.statusCode().equals(HttpStatus.OK)) {
+                        return clientResponse.bodyToMono(Integer.class);
+                    } else if (clientResponse.statusCode().is4xxClientError()) {
+                        return clientResponse.createException()
+                                .flatMap(Mono::error);
+                    } else {
+                        return clientResponse.createException()
+                                .flatMap(Mono::error);
+                    }
+                }).block();
     }
 }

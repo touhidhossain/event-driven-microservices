@@ -8,6 +8,8 @@ database-connection: &database_connection_properties
 server:
   port: 8080
 spring:
+  webflux:
+    base-path: /order_service
   datasource:
     <<: *database_connection_properties
   jpa:
@@ -32,3 +34,19 @@ spring:
           json:
             trusted:
               packages: '*'
+  application:
+    name: ORDER_SERVICE
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging.file.dir: ${home}/microservice-logs
+
+logging:
+  file:
+    name: ${logging.file.dir}/order_service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30

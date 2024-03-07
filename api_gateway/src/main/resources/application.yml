@@ -1,0 +1,43 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: API_GATEWAY
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_FIRST
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+            allowed-headers: "*"
+      routes:
+        # Order service route
+        - id: order_service
+          predicates:
+            - Path=/order_service/**
+          uri: http://127.0.0.1:8080
+          metadata:
+            response-timeout: 10000
+            connect-timeout: 10000
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging.file.dir: ${home}/microservice-logs
+
+logging:
+  file:
+    name: ${logging.file.dir}/api_gateway.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30

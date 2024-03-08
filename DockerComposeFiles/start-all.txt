@@ -1,0 +1,1 @@
+sudo docker-compose -f elk-docker-compose.yml -f kafka-docker-compose.yml -f postgresql_docker-compose.yml -f zipkin-docker-compose.yml up -d

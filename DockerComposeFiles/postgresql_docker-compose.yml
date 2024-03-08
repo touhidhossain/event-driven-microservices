@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  postgres-1:
+    image: postgres:15.3
+    ports:
+      - 5433:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql-1/data
+    environment:
+      - POSTGRES_PASSWORD=touhid
+      - POSTGRES_USER=touhid
+      - POSTGRES_DB=order_service_db
+    networks:
+      - postgresql-net
+      
+  postgres-2:
+    image: postgres:15.3
+    ports:
+      - 5434:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql-2/data
+    environment:
+      - POSTGRES_PASSWORD=touhid
+      - POSTGRES_USER=touhid
+      - POSTGRES_DB=stock_service_db
+    networks:
+      - postgresql-net
+      
+  postgres-3:
+    image: postgres:15.3
+    ports:
+      - 5435:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql-3/data
+    environment:
+      - POSTGRES_PASSWORD=touhid
+      - POSTGRES_USER=touhid
+      - POSTGRES_DB=mail_service_db
+    networks:
+      - postgresql-net
+      
+networks:
+  postgresql-net:
+    driver: bridge
